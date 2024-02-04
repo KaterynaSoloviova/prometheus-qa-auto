@@ -1,6 +1,5 @@
 import sqlite3
 
-
 class Database():
 
     def __init__(self):
@@ -56,3 +55,43 @@ class Database():
         self.cursor.execute(query)
         record = self.cursor.fetchall()
         return record   
+
+    def insert_user(self, customer_id, name, address, city, postal_code, country):
+        query = f"INSERT OR REPLACE INTO customers (id, name, address, city, postalCode, country) \
+            VALUES ({customer_id}, '{name}', '{address}', '{city}', '{postal_code}', '{country}');"
+        self.cursor.execute(query)
+        self.connection.commit()
+
+    def delete_user_by_id(self, customer_id):
+        query = f"DELETE FROM customers WHERE id = {customer_id};"
+        self.cursor.execute(query)
+        self.connection.commit()
+
+    def get_user_by_id(self, customer_id):
+        query = f"SELECT id, name, address, city, postalCode, country FROM customers WHERE id = {customer_id};"
+        self.cursor.execute(query)
+        record = self.cursor.fetchall()
+        return record
+
+    def select_orders_by_order_date_and_product_name(self, order_date, product_name):
+        query = f"SELECT orders.id, orders.order_date, products.name \
+                FROM orders \
+                LEFT JOIN products ON orders.product_id = products.id \
+                WHERE products.name = '{product_name}' and orders.order_date = '{order_date}';"
+        self.cursor.execute(query)
+        record = self.cursor.fetchall()
+        return record   
+
+    def insert_order(self, order_id, customer_id, product_id, order_date):
+        query = f"INSERT OR REPLACE INTO orders (id, customer_id, product_id, order_date) \
+            VALUES ({order_id}, {customer_id}, {product_id}, '{order_date}');"
+        self.cursor.execute(query)
+        self.connection.commit()
+
+    def delete_order_by_id(self, order_id):
+        query = f"DELETE FROM orders WHERE id = {order_id};"
+        self.cursor.execute(query)
+        self.connection.commit()     
+
+
+   
